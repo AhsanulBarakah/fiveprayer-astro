@@ -108,14 +108,88 @@ The API key is stored in the `.env` file (not committed to git). Use `.env.examp
 
 - **Dynamic Prayer Calculation**: Next prayer calculated based on current time
 - **Periodic Updates**: Next prayer updates every minute
-- **Midnight Refresh**: Prayer times automatically refresh at midnight
 - **Language Switching**: Instant toggle between English and Arabic
+
+### Server-Side Features (Vercel/Netlify Only)
+
+- **Daily Auto-Refresh**: Prayer times automatically refresh at midnight when deployed to Vercel or Netlify
+- **API Endpoints**: Server-side API calls for fresh prayer times
 
 ## 🚢 Deployment
 
-### GitHub Pages Deployment
+This project supports multiple deployment platforms. Choose based on your needs:
 
-This project is configured for automatic deployment to GitHub Pages via GitHub Actions.
+### Option 1: Vercel (Recommended)
+
+Vercel supports server-side functions, enabling daily auto-refresh of prayer times.
+
+#### Setup Steps
+
+1. **Install Vercel CLI**:
+   ```sh
+   npm i -g vercel
+   ```
+
+2. **Deploy**:
+   ```sh
+   vercel
+   ```
+   Follow the prompts to link your project.
+
+3. **Add Environment Variable**:
+   - Go to your Vercel project dashboard
+   - Settings > Environment Variables
+   - Name: `FIVEPRAYER_API_KEY`
+   - Value: Your API key
+   - Add to: Production, Preview, Development
+
+4. **Redeploy**:
+   ```sh
+   vercel --prod
+   ```
+
+#### Benefits
+- Server-side functions for daily auto-refresh
+- Automatic HTTPS
+- Global CDN
+- Preview deployments for every branch
+
+### Option 2: Netlify
+
+Netlify also supports server-side functions for daily auto-refresh.
+
+#### Setup Steps
+
+1. **Install Netlify CLI**:
+   ```sh
+   npm i -g netlify-cli
+   ```
+
+2. **Deploy**:
+   ```sh
+   netlify deploy --prod
+   ```
+   Follow the prompts to link your project.
+
+3. **Add Environment Variable**:
+   - Go to your Netlify site dashboard
+   - Site settings > Environment variables
+   - Key: `FIVEPRAYER_API_KEY`
+   - Value: Your API key
+
+4. **Configure Build Settings**:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+
+#### Benefits
+- Server-side functions for daily auto-refresh
+- Automatic HTTPS
+- Form handling
+- Edge functions
+
+### Option 3: GitHub Pages (Static Only)
+
+GitHub Pages is a static hosting service with limitations.
 
 #### Setup Steps
 
@@ -143,7 +217,14 @@ The `.github/workflows/deploy.yml` file handles:
 Every push to the `main` branch triggers:
 - Automatic build
 - Deployment to GitHub Pages
-- Site updates at: `https://ahsanulbarakah.github.io/fiveprayer-astro/`
+- Site updates at: `https://username.github.io/fiveprayer-astro/`
+
+#### Limitations
+- **No server-side functions**: Prayer times are static (fetched during build)
+- **No daily auto-refresh**: Must redeploy to update prayer times
+- **No API endpoints**: Client-side API calls won't work
+
+**Recommendation**: Use Vercel or Netlify for full functionality including daily auto-refresh.
 
 ## 🌐 Environment Variables
 
