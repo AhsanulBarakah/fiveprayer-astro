@@ -3,8 +3,6 @@ import { fetchPrayerTimes, type PrayerTimesResponse } from '../lib/api';
 ---
 
 <div class="prayer-times-container">
-  <p class="loading" id="loading">Loading prayer times...</p>
-
   <div class="error-container" id="error-container" style="display: none;">
     <div class="error-icon">⚠️</div>
     <h3 class="error-title">Unable to Load Prayer Times</h3>
@@ -402,11 +400,9 @@ import { fetchPrayerTimes, type PrayerTimesResponse } from '../lib/api';
   }
 
   function displayPrayerTimes(data: any) {
-    const loadingEl = document.getElementById('loading');
     const errorContainer = document.getElementById('error-container');
     const prayerTimesDiv = document.getElementById('prayer-times') as HTMLElement;
 
-    if (loadingEl) loadingEl.style.display = 'none';
     if (errorContainer) errorContainer.style.display = 'none';
     if (prayerTimesDiv) {
       prayerTimesDiv.style.display = 'block';
@@ -512,12 +508,10 @@ import { fetchPrayerTimes, type PrayerTimesResponse } from '../lib/api';
   }
 
   function showError(message: string) {
-    const loadingEl = document.getElementById('loading');
     const errorContainer = document.getElementById('error-container');
     const errorMessageEl = document.getElementById('error-message');
     const prayerTimesDiv = document.getElementById('prayer-times');
 
-    if (loadingEl) loadingEl.style.display = 'none';
     if (errorContainer) errorContainer.style.display = 'block';
     if (errorMessageEl) errorMessageEl.textContent = message;
     if (prayerTimesDiv) prayerTimesDiv.style.display = 'none';
@@ -547,8 +541,22 @@ import { fetchPrayerTimes, type PrayerTimesResponse } from '../lib/api';
   }
 
   function parseTime(timeStr: string): number {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
+    // Handle 12-hour format with AM/PM
+    const isPM = timeStr.toLowerCase().includes('pm');
+    const isAM = timeStr.toLowerCase().includes('am');
+    
+    // Remove AM/PM and any spaces
+    const cleanTime = timeStr.replace(/(am|pm|AM|PM|\s)/g, '');
+    const [hours, minutes] = cleanTime.split(':').map(Number);
+    
+    let hours24 = hours;
+    if (isPM && hours !== 12) {
+      hours24 = hours + 12;
+    } else if (isAM && hours === 12) {
+      hours24 = 0;
+    }
+    
+    return hours24 * 60 + minutes;
   }
 
   function getNextPrayer(data: any): { name: string; time: string; icon: string } | null {
