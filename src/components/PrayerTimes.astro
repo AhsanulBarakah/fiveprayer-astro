@@ -426,25 +426,61 @@ try {
     }
   }
 
+  function parseTime(timeStr: string): number {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  }
+
+  function getNextPrayer(data: any): { name: string; time: string; icon: string } | null {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    
+    const prayers = [
+      { name: 'fajr', time: data.prayer_schedule?.fajr?.begins?.en, icon: '🌙' },
+      { name: 'sunrise', time: data.prayer_schedule?.sunrise?.time?.en, icon: '🌅' },
+      { name: 'dhuhr', time: data.prayer_schedule?.dhuhr?.begins?.en, icon: '☀️' },
+      { name: 'asr', time: data.prayer_schedule?.asr?.begins?.en, icon: '🌤️' },
+      { name: 'maghrib', time: data.prayer_schedule?.maghrib?.begins?.en, icon: '🌇' },
+      { name: 'isha', time: data.prayer_schedule?.isha?.begins?.en, icon: '🌃' }
+    ];
+
+    for (const prayer of prayers) {
+      if (prayer.time) {
+        const prayerMinutes = parseTime(prayer.time);
+        if (prayerMinutes > currentMinutes) {
+          return prayer;
+        }
+      }
+    }
+
+    // If no prayer is left today, return first prayer of tomorrow (fajr)
+    return prayers[0];
+  }
+
   function updateNextPrayerIcon() {
-    const prayerTimesDiv = document.querySelector('.prayer-times');
+    const prayerTimesDiv = document.querySelector('.prayer-times') as HTMLElement;
     if (!prayerTimesDiv) return;
 
     const data = JSON.parse(prayerTimesDiv.dataset.prayerData || '{}');
-    const nextPrayerEn = data.next_prayer?.en?.toLowerCase();
+    const nextPrayer = getNextPrayer(data);
     
-    const iconMap = {
-      fajr: '🌙',
-      sunrise: '🌅',
-      dhuhr: '☀️',
-      asr: '🌤️',
-      maghrib: '🌇',
-      isha: '🌃'
-    };
+    if (!nextPrayer) return;
 
     const nextPrayerIcon = document.getElementById('next-prayer-icon');
-    if (nextPrayerIcon && nextPrayerEn) {
-      nextPrayerIcon.textContent = iconMap[nextPrayerEn] || '🌙';
+    if (nextPrayerIcon) {
+      nextPrayerIcon.textContent = nextPrayer.icon;
+    }
+
+    // Update next prayer text
+    const nextPrayerNameEl = document.querySelector('[data-key="next_prayer"]');
+    const nextPrayerTimeEl = document.querySelector('[data-key="next_time"]');
+    
+    if (nextPrayerNameEl) {
+      nextPrayerNameEl.textContent = data.prayer_schedule?.[nextPrayer.name]?.name?.en || nextPrayer.name;
+    }
+    
+    if (nextPrayerTimeEl) {
+      nextPrayerTimeEl.textContent = nextPrayer.time;
     }
 
     // Highlight the next prayer row
@@ -454,8 +490,8 @@ try {
 
     const prayerRows = document.querySelectorAll('.prayer-row[data-prayer]');
     prayerRows.forEach(row => {
-      const prayerName = row.dataset.prayer;
-      if (prayerName === nextPrayerEn) {
+      const prayerName = (row as HTMLElement).dataset.prayer;
+      if (prayerName === nextPrayer.name) {
         row.classList.add('next-prayer-highlight');
       }
     });
@@ -589,6 +625,7 @@ try {
     updateClock();
     setInterval(updateClock, 1000);
     updateNextPrayerIcon();
+    setInterval(updateNextPrayerIcon, 60000); // Update every minute
 
     // Add event listeners for language switcher
     const languageInputs = document.querySelectorAll('input[name="language"]');
