@@ -1,122 +1,106 @@
 ---
 import { fetchPrayerTimes, type PrayerTimesResponse } from '../lib/api';
-
-let prayerTimes: PrayerTimesResponse | null = null;
-let error: string | null = null;
-let loading = true;
-
-try {
-  prayerTimes = await fetchPrayerTimes();
-  loading = false;
-} catch (e) {
-  error = e instanceof Error ? e.message : 'Failed to load prayer times';
-  loading = false;
-}
 ---
 
 <div class="prayer-times-container">
-  {loading && <p class="loading">Loading prayer times...</p>}
+  <p class="loading" id="loading">Loading prayer times...</p>
 
-  {error && (
-    <div class="error-container">
-      <div class="error-icon">⚠️</div>
-      <h3 class="error-title">Unable to Load Prayer Times</h3>
-      <p class="error-message">{error}</p>
-      <p class="error-hint">Please check your API key configuration and try again.</p>
+  <div class="error-container" id="error-container" style="display: none;">
+    <div class="error-icon">⚠️</div>
+    <h3 class="error-title">Unable to Load Prayer Times</h3>
+    <p class="error-message" id="error-message"></p>
+    <p class="error-hint">Please check your API key configuration and try again.</p>
+  </div>
+
+  <div class="prayer-times" id="prayer-times" style="display: none;" data-prayer-data="">
+    <div class="language-switcher">
+      <label>
+        <input type="radio" name="language" value="en" checked />
+        <span>English</span>
+      </label>
+      <label>
+        <input type="radio" name="language" value="ar" />
+        <span>العربية</span>
+      </label>
     </div>
-  )}
 
-  {prayerTimes && (
-    <div class="prayer-times" data-prayer-data={JSON.stringify(prayerTimes)}>
-      <div class="language-switcher">
-        <label>
-          <input type="radio" name="language" value="en" checked />
-          <span>English</span>
-        </label>
-        <label>
-          <input type="radio" name="language" value="ar" />
-          <span>العربية</span>
-        </label>
-      </div>
-
-      <div class="header">
-        <h1 data-key="title">Prayer Times</h1>
-        <p class="date" data-key="date">{prayerTimes.date_translated.en}</p>
-        <p class="current-time">
-          <span data-key="current_time_label">{prayerTimes.current_local_time_label.en}</span>: <span id="live-clock">{prayerTimes.current_time.en}</span>
-        </p>
-      </div>
-
-      <div class="next-prayer">
-        <span class="next-prayer-icon" id="next-prayer-icon">🌙</span>
-        <h2 data-key="next_prayer_label">{prayerTimes.next_prayer_label.en}</h2>
-        <div class="next-prayer-info">
-          <div class="next-prayer-details">
-            <span class="prayer-name" data-key="next_prayer">{prayerTimes.next_prayer.en}</span>
-            <span class="prayer-time" data-key="next_time">{prayerTimes.next_time.en}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="prayer-schedule">
-        <h3 data-key="schedule_label">Today's Schedule</h3>
-        
-        <div class="prayer-row" data-prayer="fajr">
-          <span class="prayer-icon">🌙</span>
-          <span class="prayer-name" data-key="fajr_name">{prayerTimes.prayer_schedule.fajr.name.en}</span>
-          <span class="prayer-time">
-            <span data-key="fajr_begins">{prayerTimes.prayer_schedule.fajr.begins.en}</span>
-            <span class="iqamah"><span data-key="iqamah_label">{prayerTimes.iqamah_label.en}</span>: <span data-key="fajr_iqamah">{prayerTimes.prayer_schedule.fajr.iqamah?.en}</span></span>
-          </span>
-        </div>
-
-        <div class="prayer-row sunrise" data-prayer="sunrise">
-          <span class="prayer-icon">🌅</span>
-          <span class="prayer-name" data-key="sunrise_name">{prayerTimes.prayer_schedule.sunrise.name?.en}</span>
-          <span class="prayer-time" data-key="sunrise_time">{prayerTimes.prayer_schedule.sunrise.time?.en}</span>
-        </div>
-
-        <div class="prayer-row" data-prayer="dhuhr">
-          <span class="prayer-icon">☀️</span>
-          <span class="prayer-name" data-key="dhuhr_name">{prayerTimes.prayer_schedule.dhuhr.name.en}</span>
-          <span class="prayer-time">
-            <span data-key="dhuhr_begins">{prayerTimes.prayer_schedule.dhuhr.begins.en}</span>
-            <span class="iqamah"><span data-key="iqamah_label">{prayerTimes.iqamah_label.en}</span>: <span data-key="dhuhr_iqamah">{prayerTimes.prayer_schedule.dhuhr.iqamah?.en}</span></span>
-          </span>
-        </div>
-
-        <div class="prayer-row" data-prayer="asr">
-          <span class="prayer-icon">🌤️</span>
-          <span class="prayer-name" data-key="asr_name">{prayerTimes.prayer_schedule.asr.name.en}</span>
-          <span class="prayer-time">
-            <span data-key="asr_begins">{prayerTimes.prayer_schedule.asr.begins.en}</span>
-            <span class="iqamah"><span data-key="iqamah_label">{prayerTimes.iqamah_label.en}</span>: <span data-key="asr_iqamah">{prayerTimes.prayer_schedule.asr.iqamah?.en}</span></span>
-          </span>
-        </div>
-
-        <div class="prayer-row" data-prayer="maghrib">
-          <span class="prayer-icon">🌇</span>
-          <span class="prayer-name" data-key="maghrib_name">{prayerTimes.prayer_schedule.maghrib.name.en}</span>
-          <span class="prayer-time">
-            <span data-key="maghrib_begins">{prayerTimes.prayer_schedule.maghrib.begins.en}</span>
-            <span class="iqamah"><span data-key="iqamah_label">{prayerTimes.iqamah_label.en}</span>: <span data-key="maghrib_iqamah">{prayerTimes.prayer_schedule.maghrib.iqamah?.en}</span></span>
-          </span>
-        </div>
-
-        <div class="prayer-row" data-prayer="isha">
-          <span class="prayer-icon">🌃</span>
-          <span class="prayer-name" data-key="isha_name">{prayerTimes.prayer_schedule.isha.name.en}</span>
-          <span class="prayer-time">
-            <span data-key="isha_begins">{prayerTimes.prayer_schedule.isha.begins.en}</span>
-            <span class="iqamah"><span data-key="iqamah_label">{prayerTimes.iqamah_label.en}</span>: <span data-key="isha_iqamah">{prayerTimes.prayer_schedule.isha.iqamah?.en}</span></span>
-          </span>
-        </div>
-      </div>
-
-      <p class="timezone">Timezone: {prayerTimes.timezone}</p>
-      <p class="disclaimer">Please follow your local masjid prayer times. Data provided by fiveprayer API, built with Astro.</p>
+    <div class="header">
+      <h1 data-key="title">Prayer Times</h1>
+      <p class="date" data-key="date"></p>
+      <p class="current-time">
+        <span data-key="current_time_label"></span>: <span id="live-clock"></span>
+      </p>
     </div>
-  )}
+
+    <div class="next-prayer">
+      <span class="next-prayer-icon" id="next-prayer-icon">🌙</span>
+      <h2 data-key="next_prayer_label"></h2>
+      <div class="next-prayer-info">
+        <div class="next-prayer-details">
+          <span class="prayer-name" data-key="next_prayer"></span>
+          <span class="prayer-time" data-key="next_time"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="prayer-schedule">
+      <h3 data-key="schedule_label">Today's Schedule</h3>
+      
+      <div class="prayer-row" data-prayer="fajr">
+        <span class="prayer-icon">🌙</span>
+        <span class="prayer-name" data-key="fajr_name"></span>
+        <span class="prayer-time">
+          <span data-key="fajr_begins"></span>
+          <span class="iqamah"><span data-key="iqamah_label"></span>: <span data-key="fajr_iqamah"></span></span>
+        </span>
+      </div>
+
+      <div class="prayer-row sunrise" data-prayer="sunrise">
+        <span class="prayer-icon">🌅</span>
+        <span class="prayer-name" data-key="sunrise_name"></span>
+        <span class="prayer-time" data-key="sunrise_time"></span>
+      </div>
+
+      <div class="prayer-row" data-prayer="dhuhr">
+        <span class="prayer-icon">☀️</span>
+        <span class="prayer-name" data-key="dhuhr_name"></span>
+        <span class="prayer-time">
+          <span data-key="dhuhr_begins"></span>
+          <span class="iqamah"><span data-key="iqamah_label"></span>: <span data-key="dhuhr_iqamah"></span></span>
+        </span>
+      </div>
+
+      <div class="prayer-row" data-prayer="asr">
+        <span class="prayer-icon">🌤️</span>
+        <span class="prayer-name" data-key="asr_name"></span>
+        <span class="prayer-time">
+          <span data-key="asr_begins"></span>
+          <span class="iqamah"><span data-key="iqamah_label"></span>: <span data-key="asr_iqamah"></span></span>
+        </span>
+      </div>
+
+      <div class="prayer-row" data-prayer="maghrib">
+        <span class="prayer-icon">🌇</span>
+        <span class="prayer-name" data-key="maghrib_name"></span>
+        <span class="prayer-time">
+          <span data-key="maghrib_begins"></span>
+          <span class="iqamah"><span data-key="iqamah_label"></span>: <span data-key="maghrib_iqamah"></span></span>
+        </span>
+      </div>
+
+      <div class="prayer-row" data-prayer="isha">
+        <span class="prayer-icon">🌃</span>
+        <span class="prayer-name" data-key="isha_name"></span>
+        <span class="prayer-time">
+          <span data-key="isha_begins"></span>
+          <span class="iqamah"><span data-key="iqamah_label"></span>: <span data-key="isha_iqamah"></span></span>
+        </span>
+      </div>
+    </div>
+
+    <p class="timezone" id="timezone"></p>
+    <p class="disclaimer">Please follow your local masjid prayer times. Data provided by fiveprayer API, built with Astro.</p>
+  </div>
 </div>
 
 <style>
@@ -401,6 +385,143 @@ try {
 
 <script>
   let currentLang = 'en';
+  let prayerData: any = null;
+
+  async function fetchPrayerTimesData() {
+    try {
+      const response = await fetch('/api/prayer-times');
+      if (!response.ok) throw new Error('Failed to fetch prayer times');
+      const data = await response.json();
+      prayerData = data;
+      displayPrayerTimes(data);
+      return data;
+    } catch (error) {
+      showError(error instanceof Error ? error.message : 'Failed to load prayer times');
+      return null;
+    }
+  }
+
+  function displayPrayerTimes(data: any) {
+    const loadingEl = document.getElementById('loading');
+    const errorContainer = document.getElementById('error-container');
+    const prayerTimesDiv = document.getElementById('prayer-times') as HTMLElement;
+
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (errorContainer) errorContainer.style.display = 'none';
+    if (prayerTimesDiv) {
+      prayerTimesDiv.style.display = 'block';
+      prayerTimesDiv.dataset.prayerData = JSON.stringify(data);
+    }
+
+    // Update all data-key elements
+    const elements = document.querySelectorAll('[data-key]');
+    elements.forEach(el => {
+      const key = el.dataset.key;
+      let value = '';
+
+      switch (key) {
+        case 'title':
+          value = 'Prayer Times';
+          break;
+        case 'date':
+          value = data.date_translated?.en || '';
+          break;
+        case 'current_time_label':
+          value = data.current_local_time_label?.en || '';
+          break;
+        case 'next_prayer_label':
+          value = data.next_prayer_label?.en || '';
+          break;
+        case 'next_prayer':
+          value = data.next_prayer?.en || '';
+          break;
+        case 'next_time':
+          value = data.next_time?.en || '';
+          break;
+        case 'schedule_label':
+          value = "Today's Schedule";
+          break;
+        case 'fajr_name':
+          value = data.prayer_schedule?.fajr?.name?.en || '';
+          break;
+        case 'fajr_begins':
+          value = data.prayer_schedule?.fajr?.begins?.en || '';
+          break;
+        case 'iqamah_label':
+          value = data.iqamah_label?.en || '';
+          break;
+        case 'fajr_iqamah':
+          value = data.prayer_schedule?.fajr?.iqamah?.en || '';
+          break;
+        case 'sunrise_name':
+          value = data.prayer_schedule?.sunrise?.name?.en || '';
+          break;
+        case 'sunrise_time':
+          value = data.prayer_schedule?.sunrise?.time?.en || '';
+          break;
+        case 'dhuhr_name':
+          value = data.prayer_schedule?.dhuhr?.name?.en || '';
+          break;
+        case 'dhuhr_begins':
+          value = data.prayer_schedule?.dhuhr?.begins?.en || '';
+          break;
+        case 'dhuhr_iqamah':
+          value = data.prayer_schedule?.dhuhr?.iqamah?.en || '';
+          break;
+        case 'asr_name':
+          value = data.prayer_schedule?.asr?.name?.en || '';
+          break;
+        case 'asr_begins':
+          value = data.prayer_schedule?.asr?.begins?.en || '';
+          break;
+        case 'asr_iqamah':
+          value = data.prayer_schedule?.asr?.iqamah?.en || '';
+          break;
+        case 'maghrib_name':
+          value = data.prayer_schedule?.maghrib?.name?.en || '';
+          break;
+        case 'maghrib_begins':
+          value = data.prayer_schedule?.maghrib?.begins?.en || '';
+          break;
+        case 'maghrib_iqamah':
+          value = data.prayer_schedule?.maghrib?.iqamah?.en || '';
+          break;
+        case 'isha_name':
+          value = data.prayer_schedule?.isha?.name?.en || '';
+          break;
+        case 'isha_begins':
+          value = data.prayer_schedule?.isha?.begins?.en || '';
+          break;
+        case 'isha_iqamah':
+          value = data.prayer_schedule?.isha?.iqamah?.en || '';
+          break;
+      }
+
+      if (value) {
+        el.textContent = value;
+      }
+    });
+
+    // Update timezone
+    const timezoneEl = document.getElementById('timezone');
+    if (timezoneEl) {
+      timezoneEl.textContent = `Timezone: ${data.timezone || ''}`;
+    }
+
+    updateNextPrayerIcon();
+  }
+
+  function showError(message: string) {
+    const loadingEl = document.getElementById('loading');
+    const errorContainer = document.getElementById('error-container');
+    const errorMessageEl = document.getElementById('error-message');
+    const prayerTimesDiv = document.getElementById('prayer-times');
+
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (errorContainer) errorContainer.style.display = 'block';
+    if (errorMessageEl) errorMessageEl.textContent = message;
+    if (prayerTimesDiv) prayerTimesDiv.style.display = 'none';
+  }
 
   function updateClock() {
     const clockElement = document.getElementById('live-clock');
@@ -413,7 +534,6 @@ try {
       const displayHours = hours % 12 || 12;
       
       if (currentLang === 'ar') {
-        // Convert to Arabic numerals and format
         const toArabicNumeral = (n: string) => {
           const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
           return n.replace(/\d/g, (d) => arabicNumerals[parseInt(d)]);
@@ -453,17 +573,13 @@ try {
       }
     }
 
-    // If no prayer is left today, return first prayer of tomorrow (fajr)
     return prayers[0];
   }
 
   function updateNextPrayerIcon() {
-    const prayerTimesDiv = document.querySelector('.prayer-times') as HTMLElement;
-    if (!prayerTimesDiv) return;
+    if (!prayerData) return;
 
-    const data = JSON.parse(prayerTimesDiv.dataset.prayerData || '{}');
-    const nextPrayer = getNextPrayer(data);
-    
+    const nextPrayer = getNextPrayer(prayerData);
     if (!nextPrayer) return;
 
     const nextPrayerIcon = document.getElementById('next-prayer-icon');
@@ -471,19 +587,17 @@ try {
       nextPrayerIcon.textContent = nextPrayer.icon;
     }
 
-    // Update next prayer text
     const nextPrayerNameEl = document.querySelector('[data-key="next_prayer"]');
     const nextPrayerTimeEl = document.querySelector('[data-key="next_time"]');
     
     if (nextPrayerNameEl) {
-      nextPrayerNameEl.textContent = data.prayer_schedule?.[nextPrayer.name]?.name?.en || nextPrayer.name;
+      nextPrayerNameEl.textContent = prayerData.prayer_schedule?.[nextPrayer.name]?.name?.en || nextPrayer.name;
     }
     
     if (nextPrayerTimeEl) {
       nextPrayerTimeEl.textContent = nextPrayer.time;
     }
 
-    // Highlight the next prayer row
     document.querySelectorAll('.prayer-row').forEach(row => {
       row.classList.remove('next-prayer-highlight');
     });
@@ -497,22 +611,18 @@ try {
     });
   }
 
-  function updateLanguage(lang) {
+  function updateLanguage(lang: string) {
     currentLang = lang;
-    const prayerTimesDiv = document.querySelector('.prayer-times');
-    if (!prayerTimesDiv) return;
+    if (!prayerData) return;
 
-    const data = JSON.parse(prayerTimesDiv.dataset.prayerData || '{}');
     const translations = {
       title: { en: 'Prayer Times', ar: 'أوقات الصلاة' },
       schedule_label: { en: "Today's Schedule", ar: 'جدول اليوم' },
     };
 
-    // Collect all updates first
     const updates: Array<{ element: Element; value: string }> = [];
+    const elements = document.querySelectorAll('[data-key]');
     
-    // Update all elements with data-key attributes
-    const elements = prayerTimesDiv.querySelectorAll('[data-key]');
     elements.forEach(el => {
       const key = el.dataset.key;
       let value = '';
@@ -522,76 +632,76 @@ try {
           value = translations.title[lang];
           break;
         case 'date':
-          value = data.date_translated?.[lang];
+          value = prayerData.date_translated?.[lang];
           break;
         case 'current_time_label':
-          value = data.current_local_time_label?.[lang];
+          value = prayerData.current_local_time_label?.[lang];
           break;
         case 'next_prayer_label':
-          value = data.next_prayer_label?.[lang];
+          value = prayerData.next_prayer_label?.[lang];
           break;
         case 'next_prayer':
-          value = data.next_prayer?.[lang];
+          value = prayerData.next_prayer?.[lang];
           break;
         case 'next_time':
-          value = data.next_time?.[lang];
+          value = prayerData.next_time?.[lang];
           break;
         case 'schedule_label':
           value = translations.schedule_label[lang];
           break;
         case 'fajr_name':
-          value = data.prayer_schedule?.fajr?.name?.[lang];
+          value = prayerData.prayer_schedule?.fajr?.name?.[lang];
           break;
         case 'fajr_begins':
-          value = data.prayer_schedule?.fajr?.begins?.[lang];
+          value = prayerData.prayer_schedule?.fajr?.begins?.[lang];
           break;
         case 'iqamah_label':
-          value = data.iqamah_label?.[lang];
+          value = prayerData.iqamah_label?.[lang];
           break;
         case 'fajr_iqamah':
-          value = data.prayer_schedule?.fajr?.iqamah?.[lang];
+          value = prayerData.prayer_schedule?.fajr?.iqamah?.[lang];
           break;
         case 'sunrise_name':
-          value = data.prayer_schedule?.sunrise?.name?.[lang];
+          value = prayerData.prayer_schedule?.sunrise?.name?.[lang];
           break;
         case 'sunrise_time':
-          value = data.prayer_schedule?.sunrise?.time?.[lang];
+          value = prayerData.prayer_schedule?.sunrise?.time?.[lang];
           break;
         case 'dhuhr_name':
-          value = data.prayer_schedule?.dhuhr?.name?.[lang];
+          value = prayerData.prayer_schedule?.dhuhr?.name?.[lang];
           break;
         case 'dhuhr_begins':
-          value = data.prayer_schedule?.dhuhr?.begins?.[lang];
+          value = prayerData.prayer_schedule?.dhuhr?.begins?.[lang];
           break;
         case 'dhuhr_iqamah':
-          value = data.prayer_schedule?.dhuhr?.iqamah?.[lang];
+          value = prayerData.prayer_schedule?.dhuhr?.iqamah?.[lang];
           break;
         case 'asr_name':
-          value = data.prayer_schedule?.asr?.name?.[lang];
+          value = prayerData.prayer_schedule?.asr?.name?.[lang];
           break;
         case 'asr_begins':
-          value = data.prayer_schedule?.asr?.begins?.[lang];
+          value = prayerData.prayer_schedule?.asr?.begins?.[lang];
           break;
         case 'asr_iqamah':
-          value = data.prayer_schedule?.asr?.iqamah?.[lang];
+          value = prayerData.prayer_schedule?.asr?.iqamah?.[lang];
           break;
         case 'maghrib_name':
-          value = data.prayer_schedule?.maghrib?.name?.[lang];
+          value = prayerData.prayer_schedule?.maghrib?.name?.[lang];
           break;
         case 'maghrib_begins':
-          value = data.prayer_schedule?.maghrib?.begins?.[lang];
+          value = prayerData.prayer_schedule?.maghrib?.begins?.[lang];
           break;
         case 'maghrib_iqamah':
-          value = data.prayer_schedule?.maghrib?.iqamah?.[lang];
+          value = prayerData.prayer_schedule?.maghrib?.iqamah?.[lang];
           break;
         case 'isha_name':
-          value = data.prayer_schedule?.isha?.name?.[lang];
+          value = prayerData.prayer_schedule?.isha?.name?.[lang];
           break;
         case 'isha_begins':
-          value = data.prayer_schedule?.isha?.begins?.[lang];
+          value = prayerData.prayer_schedule?.isha?.begins?.[lang];
           break;
         case 'isha_iqamah':
-          value = data.prayer_schedule?.isha?.iqamah?.[lang];
+          value = prayerData.prayer_schedule?.isha?.iqamah?.[lang];
           break;
       }
 
@@ -600,34 +710,45 @@ try {
       }
     });
 
-    // Apply all updates at once using requestAnimationFrame
     requestAnimationFrame(() => {
       updates.forEach(update => {
         update.element.textContent = update.value;
       });
       
-      // Update text direction for Arabic
-      prayerTimesDiv.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      const prayerTimesDiv = document.querySelector('.prayer-times') as HTMLElement;
+      if (prayerTimesDiv) {
+        prayerTimesDiv.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      }
       
-      // Update clock format immediately
       updateClock();
     });
   }
 
-  function handleLanguageChange(e) {
-    if (e.target.name === 'language') {
-      updateLanguage(e.target.value);
+  function handleLanguageChange(e: Event) {
+    if ((e.target as HTMLInputElement).name === 'language') {
+      updateLanguage((e.target as HTMLInputElement).value);
     }
   }
 
-  // Initialize
+  function scheduleMidnightRefresh() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const msUntilMidnight = midnight.getTime() - now.getTime();
+    
+    setTimeout(() => {
+      fetchPrayerTimesData();
+      scheduleMidnightRefresh();
+    }, msUntilMidnight);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    fetchPrayerTimesData();
     updateClock();
     setInterval(updateClock, 1000);
-    updateNextPrayerIcon();
-    setInterval(updateNextPrayerIcon, 60000); // Update every minute
+    setInterval(updateNextPrayerIcon, 60000);
+    scheduleMidnightRefresh();
 
-    // Add event listeners for language switcher
     const languageInputs = document.querySelectorAll('input[name="language"]');
     languageInputs.forEach(input => {
       input.addEventListener('change', handleLanguageChange);
