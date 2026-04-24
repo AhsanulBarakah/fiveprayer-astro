@@ -484,7 +484,7 @@ try {
     }
     
     if (nextPrayerTimeEl) {
-      nextPrayerTimeEl.textContent = nextPrayer.time;
+      nextPrayerTimeEl.textContent = prayerData.prayer_schedule?.[nextPrayer.name]?.begins?.[currentLang as 'en' | 'ar'] || nextPrayer.time;
     }
 
     document.querySelectorAll('.prayer-row').forEach(row => {
