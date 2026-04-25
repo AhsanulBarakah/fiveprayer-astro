@@ -22,7 +22,6 @@ jobs:
       - run: npm run build
         env:
           FIVEPRAYER_API_KEY: ${{ secrets.FIVEPRAYER_API_KEY }}
-          PUBLIC_FIVEPRAYER_API_KEY: ${{ secrets.FIVEPRAYER_API_KEY }}
           PUBLIC_BASE: /fiveprayer-astro/
       - uses: actions/upload-pages-artifact@v3
         with:
