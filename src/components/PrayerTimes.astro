@@ -417,8 +417,16 @@ try {
 
   async function fetchPrayerTimesData(clearCache = false) {
     try {
-      const url = clearCache ? '/api/prayer-times?clear_cache=1' : '/api/prayer-times';
-      const response = await fetch(url);
+      const API_KEY = import.meta.env.PUBLIC_FIVEPRAYER_API_KEY;
+      const API_BASE = 'https://fiveprayer.com/wp-json/fiveprayer/v1/external';
+      const url = `${API_BASE}/next-prayer?langs=en,ar&time_format=12h${clearCache ? '&clear_cache=1' : ''}`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'X-API-Key': API_KEY,
+        },
+      });
+      
       if (!response.ok) throw new Error('Failed to fetch prayer times');
       const data = await response.json();
       prayerData = data;
