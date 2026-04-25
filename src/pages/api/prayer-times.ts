@@ -5,6 +5,7 @@ export const prerender = false;
 
 export const GET: APIRoute = async () => {
   try {
+    console.log('API Key available:', !!import.meta.env.FIVEPRAYER_API_KEY);
     const prayerTimes = await fetchPrayerTimes();
     return new Response(JSON.stringify(prayerTimes), {
       status: 200,
@@ -16,6 +17,7 @@ export const GET: APIRoute = async () => {
       },
     });
   } catch (error) {
+    console.error('Error in prayer-times API:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Failed to fetch prayer times' }),
       {
