@@ -1,9 +1,10 @@
 import type { APIRoute } from 'astro';
 import { fetchPrayerTimes } from '../../lib/api';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ url }) => {
   try {
-    const prayerTimes = await fetchPrayerTimes();
+    const clearCache = url.searchParams.get('clear_cache') === '1';
+    const prayerTimes = await fetchPrayerTimes('en,ar', '12h', clearCache);
     return new Response(JSON.stringify(prayerTimes), {
       status: 200,
       headers: {

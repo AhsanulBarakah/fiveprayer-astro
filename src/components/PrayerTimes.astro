@@ -30,6 +30,7 @@ try {
         <input type="radio" name="language" value="ar" />
         <span>العربية</span>
       </label>
+      <button id="clear-cache-btn" class="clear-cache-btn">🔄 Refresh</button>
     </div>
 
     <div class="header">
@@ -368,6 +369,24 @@ try {
     line-height: 1.4;
   }
 
+  .clear-cache-btn {
+    background: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+  }
+
+  .clear-cache-btn:hover {
+    background: #e0e0e0;
+  }
+
+  .clear-cache-btn:active {
+    background: #d0d0d0;
+  }
+
   @media (max-width: 640px) {
     .prayer-times-container {
       padding: 1rem;
@@ -396,9 +415,10 @@ try {
   let currentLang = 'en';
   let prayerData: any = null;
 
-  async function fetchPrayerTimesData() {
+  async function fetchPrayerTimesData(clearCache = false) {
     try {
-      const response = await fetch('/api/prayer-times');
+      const url = clearCache ? '/api/prayer-times?clear_cache=1' : '/api/prayer-times';
+      const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch prayer times');
       const data = await response.json();
       prayerData = data;
@@ -540,10 +560,34 @@ try {
     }, msUntilMidnight);
   }
 
+  function shouldFetchNewData(): boolean {
+    if (!prayerData) return true;
+    
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    
+    // Check each prayer's iqamah time
+    const prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+    for (const prayer of prayers) {
+      const iqamahTime = prayerData.prayer_schedule?.[prayer]?.iqamah?.en;
+      if (iqamahTime) {
+        const iqamahMinutes = parseTime(iqamahTime);
+        // If current time just passed iqamah time (within the last minute)
+        if (currentMinutes >= iqamahMinutes && currentMinutes < iqamahMinutes + 1) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+
   function schedulePeriodicFetch() {
-    // Fetch prayer times every minute to update next prayer
+    // Check every minute if we should fetch new data
     setInterval(() => {
-      fetchPrayerTimesData();
+      if (shouldFetchNewData()) {
+        fetchPrayerTimesData();
+      }
     }, 60000);
   }
 
@@ -771,6 +815,11 @@ try {
     }
   }
 
+  function handleClearCache(e: Event) {
+    e.preventDefault();
+    fetchPrayerTimesData(true);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     // Try to use server-side data first, fallback to client-side fetch
     const prayerTimesDiv = document.querySelector('.prayer-times') as HTMLElement;
@@ -795,5 +844,10 @@ try {
     languageInputs.forEach(input => {
       input.addEventListener('change', handleLanguageChange);
     });
+
+    const clearCacheBtn = document.getElementById('clear-cache-btn');
+    if (clearCacheBtn) {
+      clearCacheBtn.addEventListener('click', handleClearCache);
+    }
   });
 </script>
