@@ -12,17 +12,15 @@ try {
 ---
 
 <div class="prayer-times-container">
-  {error && (
-    <div class="error-container">
-      <div class="error-icon">⚠️</div>
-      <h3 class="error-title">Unable to Load Prayer Times</h3>
-      <p class="error-message">{error}</p>
-      <p class="error-hint">Please check your API key configuration and try again.</p>
-    </div>
-  )}
+  <div class="error-container" id="error-container" style="display: none;">
+    <div class="error-icon">⚠️</div>
+    <h3 class="error-title">Unable to Load Prayer Times</h3>
+    <p class="error-message" id="error-message"></p>
+    <p class="error-hint">Please check your API key configuration and try again.</p>
+  </div>
 
   {prayerTimes && (
-    <div class="prayer-times" id="prayer-times" data-prayer-data={JSON.stringify(prayerTimes)}>
+    <div class="prayer-times" id="prayer-times" data-prayer-data={JSON.stringify(prayerTimes)} style="display: block;">
     <div class="language-switcher">
       <label>
         <input type="radio" name="language" value="en" checked />
@@ -398,6 +396,150 @@ try {
   let currentLang = 'en';
   let prayerData: any = null;
 
+  async function fetchPrayerTimesData() {
+    try {
+      const response = await fetch('/api/prayer-times');
+      if (!response.ok) throw new Error('Failed to fetch prayer times');
+      const data = await response.json();
+      prayerData = data;
+      displayPrayerTimes(data);
+      return data;
+    } catch (error) {
+      showError(error instanceof Error ? error.message : 'Failed to load prayer times');
+      return null;
+    }
+  }
+
+  function displayPrayerTimes(data: any) {
+    const errorContainer = document.getElementById('error-container');
+    const prayerTimesDiv = document.getElementById('prayer-times') as HTMLElement;
+
+    if (errorContainer) errorContainer.style.display = 'none';
+    if (prayerTimesDiv) {
+      prayerTimesDiv.style.display = 'block';
+      prayerTimesDiv.dataset.prayerData = JSON.stringify(data);
+    }
+
+    // Update all data-key elements
+    const elements = document.querySelectorAll('[data-key]');
+    elements.forEach(el => {
+      const key = el.dataset.key;
+      let value = '';
+
+      switch (key) {
+        case 'title':
+          value = 'Prayer Times';
+          break;
+        case 'date':
+          value = data.date_translated?.en || '';
+          break;
+        case 'current_time_label':
+          value = data.current_local_time_label?.en || '';
+          break;
+        case 'next_prayer_label':
+          value = data.next_prayer_label?.en || '';
+          break;
+        case 'next_prayer':
+          value = data.next_prayer?.en || '';
+          break;
+        case 'next_time':
+          value = data.next_time?.en || '';
+          break;
+        case 'schedule_label':
+          value = "Today's Schedule";
+          break;
+        case 'fajr_name':
+          value = data.prayer_schedule?.fajr?.name?.en || '';
+          break;
+        case 'fajr_begins':
+          value = data.prayer_schedule?.fajr?.begins?.en || '';
+          break;
+        case 'iqamah_label':
+          value = data.iqamah_label?.en || '';
+          break;
+        case 'fajr_iqamah':
+          value = data.prayer_schedule?.fajr?.iqamah?.en || '';
+          break;
+        case 'sunrise_name':
+          value = data.prayer_schedule?.sunrise?.name?.en || '';
+          break;
+        case 'sunrise_time':
+          value = data.prayer_schedule?.sunrise?.time?.en || '';
+          break;
+        case 'dhuhr_name':
+          value = data.prayer_schedule?.dhuhr?.name?.en || '';
+          break;
+        case 'dhuhr_begins':
+          value = data.prayer_schedule?.dhuhr?.begins?.en || '';
+          break;
+        case 'dhuhr_iqamah':
+          value = data.prayer_schedule?.dhuhr?.iqamah?.en || '';
+          break;
+        case 'asr_name':
+          value = data.prayer_schedule?.asr?.name?.en || '';
+          break;
+        case 'asr_begins':
+          value = data.prayer_schedule?.asr?.begins?.en || '';
+          break;
+        case 'asr_iqamah':
+          value = data.prayer_schedule?.asr?.iqamah?.en || '';
+          break;
+        case 'maghrib_name':
+          value = data.prayer_schedule?.maghrib?.name?.en || '';
+          break;
+        case 'maghrib_begins':
+          value = data.prayer_schedule?.maghrib?.begins?.en || '';
+          break;
+        case 'maghrib_iqamah':
+          value = data.prayer_schedule?.maghrib?.iqamah?.en || '';
+          break;
+        case 'isha_name':
+          value = data.prayer_schedule?.isha?.name?.en || '';
+          break;
+        case 'isha_begins':
+          value = data.prayer_schedule?.isha?.begins?.en || '';
+          break;
+        case 'isha_iqamah':
+          value = data.prayer_schedule?.isha?.iqamah?.en || '';
+          break;
+      }
+
+      if (value) {
+        el.textContent = value;
+      }
+    });
+
+    // Update timezone
+    const timezoneEl = document.getElementById('timezone');
+    if (timezoneEl) {
+      timezoneEl.textContent = `Timezone: ${data.timezone || ''}`;
+    }
+
+    updateNextPrayerIcon();
+  }
+
+  function showError(message: string) {
+    const errorContainer = document.getElementById('error-container');
+    const errorMessageEl = document.getElementById('error-message');
+    const prayerTimesDiv = document.getElementById('prayer-times');
+
+    if (errorContainer) errorContainer.style.display = 'block';
+    if (errorMessageEl) errorMessageEl.textContent = message;
+    if (prayerTimesDiv) prayerTimesDiv.style.display = 'none';
+  }
+
+  function scheduleMidnightRefresh() {
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const msUntilMidnight = midnight.getTime() - now.getTime();
+    
+    setTimeout(() => {
+      fetchPrayerTimesData();
+      scheduleMidnightRefresh();
+    }, msUntilMidnight);
+  }
+
   function updateClock() {
     const clockElement = document.getElementById('live-clock');
     if (clockElement) {
@@ -480,11 +622,11 @@ try {
     const nextPrayerTimeEl = document.querySelector('[data-key="next_time"]');
     
     if (nextPrayerNameEl) {
-      nextPrayerNameEl.textContent = prayerData.prayer_schedule?.[nextPrayer.name]?.name?.[currentLang as 'en' | 'ar'] || nextPrayer.name;
+      nextPrayerNameEl.textContent = prayerData.next_prayer?.[currentLang as 'en' | 'ar'] || nextPrayer.name;
     }
     
     if (nextPrayerTimeEl) {
-      nextPrayerTimeEl.textContent = prayerData.prayer_schedule?.[nextPrayer.name]?.begins?.[currentLang as 'en' | 'ar'] || nextPrayer.time;
+      nextPrayerTimeEl.textContent = prayerData.next_time?.[currentLang as 'en' | 'ar'] || nextPrayer.time;
     }
 
     document.querySelectorAll('.prayer-row').forEach(row => {
@@ -623,15 +765,22 @@ try {
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    // Try to use server-side data first, fallback to client-side fetch
     const prayerTimesDiv = document.querySelector('.prayer-times') as HTMLElement;
     if (prayerTimesDiv && prayerTimesDiv.dataset.prayerData) {
       prayerData = JSON.parse(prayerTimesDiv.dataset.prayerData);
+    } else {
+      // If no server-side data, fetch from API
+      fetchPrayerTimesData();
     }
     
     updateClock();
     setInterval(updateClock, 1000);
     updateNextPrayerIcon();
     setInterval(updateNextPrayerIcon, 60000);
+    
+    // Schedule midnight refresh for Vercel/Netlify
+    scheduleMidnightRefresh();
 
     const languageInputs = document.querySelectorAll('input[name="language"]');
     languageInputs.forEach(input => {
