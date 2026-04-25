@@ -38,10 +38,9 @@ export interface PrayerTimesResponse {
 
 export async function fetchPrayerTimes(
   langs: string = 'en,ar',
-  timeFormat: string = '12h',
-  clearCache: boolean = false
+  timeFormat: string = '12h'
 ): Promise<PrayerTimesResponse> {
-  const url = `${API_BASE}/next-prayer?langs=${langs}&time_format=${timeFormat}${clearCache ? '&clear_cache=1' : ''}`;
+  const url = `${API_BASE}/next-prayer?langs=${langs}&time_format=${timeFormat}`;
   
   const response = await fetch(url, {
     headers: {
