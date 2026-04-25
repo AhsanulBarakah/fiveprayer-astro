@@ -4,10 +4,13 @@ import { fetchPrayerTimes, type PrayerTimesResponse } from '../lib/api';
 let prayerTimes: PrayerTimesResponse | null = null;
 let error: string | null = null;
 
-try {
-  prayerTimes = await fetchPrayerTimes();
-} catch (e) {
-  error = e instanceof Error ? e.message : 'Failed to load prayer times';
+// Only fetch on server if API key is available
+if (import.meta.env.FIVEPRAYER_API_KEY) {
+  try {
+    prayerTimes = await fetchPrayerTimes();
+  } catch (e) {
+    error = e instanceof Error ? e.message : 'Failed to load prayer times';
+  }
 }
 ---
 
