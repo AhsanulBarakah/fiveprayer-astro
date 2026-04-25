@@ -4,7 +4,7 @@ import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-  output: import.meta.env.VERCEL ? 'server' : 'static',
+  output: 'server',
   base: import.meta.env.PUBLIC_BASE || '/',
-  adapter: import.meta.env.VERCEL ? vercel() : undefined,
+  adapter: vercel(),
 });
