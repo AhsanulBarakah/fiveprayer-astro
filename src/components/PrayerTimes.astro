@@ -398,7 +398,7 @@ try {
 
   async function fetchPrayerTimesData() {
     try {
-      const API_KEY = import.meta.env.PUBLIC_FIVEPRAYER_API_KEY || import.meta.env.FIVEPRAYER_API_KEY;
+      const API_KEY = import.meta.env.PUBLIC_FIVEPRAYER_API_KEY;
       const API_BASE = 'https://fiveprayer.com/wp-json/fiveprayer/v1/external';
       const url = `${API_BASE}/next-prayer?langs=en,ar&time_format=12h`;
       
