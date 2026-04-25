@@ -4,13 +4,10 @@ import { fetchPrayerTimes, type PrayerTimesResponse } from '../lib/api';
 let prayerTimes: PrayerTimesResponse | null = null;
 let error: string | null = null;
 
-// Only fetch on server if API key is available
-if (import.meta.env.FIVEPRAYER_API_KEY) {
-  try {
-    prayerTimes = await fetchPrayerTimes();
-  } catch (e) {
-    error = e instanceof Error ? e.message : 'Failed to load prayer times';
-  }
+try {
+  prayerTimes = await fetchPrayerTimes();
+} catch (e) {
+  error = e instanceof Error ? e.message : 'Failed to load prayer times';
 }
 ---
 
@@ -401,7 +398,16 @@ if (import.meta.env.FIVEPRAYER_API_KEY) {
 
   async function fetchPrayerTimesData() {
     try {
-      const response = await fetch('/api/prayer-times');
+      const API_KEY = import.meta.env.PUBLIC_FIVEPRAYER_API_KEY;
+      const API_BASE = 'https://fiveprayer.com/wp-json/fiveprayer/v1/external';
+      const url = `${API_BASE}/next-prayer?langs=en,ar&time_format=12h`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'X-API-Key': API_KEY,
+        },
+      });
+      
       if (!response.ok) throw new Error('Failed to fetch prayer times');
       const data = await response.json();
       prayerData = data;
