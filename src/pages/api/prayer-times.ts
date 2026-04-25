@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { fetchPrayerTimes } from '../../lib/api';
 
+export const prerender = false;
+
 export const GET: APIRoute = async () => {
   try {
     const prayerTimes = await fetchPrayerTimes();
