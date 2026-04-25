@@ -1,0 +1,10 @@
+{
+  "buildCommand": "astro build",
+  "devCommand": "astro dev",
+  "installCommand": "npm install",
+  "build": {
+    "env": {
+      "VERCEL": "true"
+    }
+  }
+}
