@@ -40,13 +40,21 @@ export async function fetchPrayerTimes(
 ): Promise<PrayerTimesResponse> {
   const url = `${API_BASE}/next-prayer?langs=${langs}&time_format=${timeFormat}`;
   
+  console.log('Fetching from:', url);
+  console.log('API Key:', API_KEY ? API_KEY.substring(0, 10) + '...' : 'not set');
+  
   const response = await fetch(url, {
     headers: {
       'X-API-Key': API_KEY || '',
     },
   });
 
+  console.log('Response status:', response.status);
+  console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
   if (!response.ok) {
+    const errorText = await response.text();
+    console.log('Error response:', errorText);
     throw new Error(`Failed to fetch prayer times: ${response.statusText}`);
   }
 
