@@ -1,4 +1,4 @@
-const API_KEY = process.env.NEXT_PUBLIC_FIVEPRAYER_API_KEY;
+const API_KEY = process.env.FIVEPRAYER_API_KEY;
 const API_BASE = 'https://fiveprayer.com/wp-json/fiveprayer/v1/external';
 
 export interface PrayerTime {

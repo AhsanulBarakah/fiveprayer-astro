@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { fetchPrayerTimes, type PrayerTimesResponse } from '../lib/api';
+import type { PrayerTimesResponse } from '../lib/api';
 
 export default function Home() {
   const [prayerData, setPrayerData] = useState<PrayerTimesResponse | null>(null);
@@ -11,7 +11,9 @@ export default function Home() {
   useEffect(() => {
     async function loadPrayerTimes() {
       try {
-        const data = await fetchPrayerTimes();
+        const response = await fetch('/api/prayer-times');
+        if (!response.ok) throw new Error('Failed to fetch prayer times');
+        const data = await response.json();
         setPrayerData(data);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load prayer times');
@@ -29,7 +31,10 @@ export default function Home() {
     // Check every minute if we should fetch new data
     const fetchInterval = setInterval(() => {
       if (shouldFetchNewData()) {
-        fetchPrayerTimes().then(setPrayerData).catch(setError);
+        fetch('/api/prayer-times')
+          .then(res => res.json())
+          .then(setPrayerData)
+          .catch(setError);
       }
     }, 60000);
 
@@ -109,7 +114,10 @@ export default function Home() {
     const msUntilMidnight = midnight.getTime() - now.getTime();
     
     return setTimeout(() => {
-      fetchPrayerTimes().then(setPrayerData).catch(setError);
+      fetch('/api/prayer-times')
+        .then(res => res.json())
+        .then(setPrayerData)
+        .catch(setError);
     }, msUntilMidnight);
   }
 
