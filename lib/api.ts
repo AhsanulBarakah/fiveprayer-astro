@@ -55,7 +55,12 @@ export async function fetchPrayerTimes(
   if (!response.ok) {
     const errorText = await response.text();
     console.log('Error response:', errorText);
-    throw new Error(errorText || `Failed to fetch prayer times: ${response.statusText}`);
+    try {
+      const errorJson = JSON.parse(errorText);
+      throw new Error(errorJson.message || errorText || `Failed to fetch prayer times: ${response.statusText}`);
+    } catch {
+      throw new Error(errorText || `Failed to fetch prayer times: ${response.statusText}`);
+    }
   }
 
   return response.json();
