@@ -12,8 +12,10 @@ export default function Home() {
     async function loadPrayerTimes() {
       try {
         const response = await fetch('/api/prayer-times');
-        if (!response.ok) throw new Error('Failed to fetch prayer times');
         const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to fetch prayer times');
+        }
         setPrayerData(data);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load prayer times');
