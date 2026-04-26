@@ -8,8 +8,18 @@ export async function GET() {
     return NextResponse.json(prayerTimes);
   } catch (error) {
     console.error('Error in prayer-times API:', error);
+    let errorMessage = 'Failed to fetch prayer times';
+    if (error instanceof Error) {
+      // Try to parse JSON error message
+      try {
+        const errorJson = JSON.parse(error.message);
+        errorMessage = errorJson.message || error.message;
+      } catch {
+        errorMessage = error.message;
+      }
+    }
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to fetch prayer times' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

@@ -14,13 +14,7 @@ export default function Home() {
         const response = await fetch('/api/prayer-times');
         const data = await response.json();
         if (data.error) {
-          // Try to parse JSON error message
-          try {
-            const errorJson = JSON.parse(data.error);
-            throw new Error(errorJson.message || data.error);
-          } catch {
-            throw new Error(data.error);
-          }
+          throw new Error(data.error);
         }
         setPrayerData(data);
       } catch (e) {
