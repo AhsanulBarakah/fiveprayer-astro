@@ -179,6 +179,9 @@ export default function Home() {
     );
   }
 
+  if (!prayerData) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-4 px-2">
