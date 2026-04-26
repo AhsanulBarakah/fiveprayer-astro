@@ -1,4 +1,4 @@
-const API_KEY = import.meta.env.PUBLIC_FIVEPRAYER_API_KEY;
+const API_KEY = process.env.NEXT_PUBLIC_FIVEPRAYER_API_KEY;
 const API_BASE = 'https://fiveprayer.com/wp-json/fiveprayer/v1/external';
 
 export interface PrayerTime {
@@ -20,14 +20,12 @@ export interface PrayerSchedule {
 }
 
 export interface PrayerTimesResponse {
-  date: string;
   date_translated: { en: string; ar: string };
+  current_local_time_label: { en: string; ar: string };
+  current_time: { en: string; ar: string };
   next_prayer_label: { en: string; ar: string };
   next_prayer: { en: string; ar: string };
   next_time: { en: string; ar: string };
-  current_local_time_label: { en: string; ar: string };
-  current_time: { en: string; ar: string };
-  begins_label: { en: string; ar: string };
   iqamah_label: { en: string; ar: string };
   prayer_schedule: PrayerSchedule;
   timezone: string;
@@ -44,7 +42,7 @@ export async function fetchPrayerTimes(
   
   const response = await fetch(url, {
     headers: {
-      'X-API-Key': API_KEY,
+      'X-API-Key': API_KEY || '',
     },
   });
 
