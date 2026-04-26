@@ -158,12 +158,22 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center max-w-md shadow-lg">
-          <div className="text-5xl mb-4">⚠️</div>
-          <h3 className="text-xl font-bold text-red-600 mb-3">Unable to Load Prayer Times</h3>
-          <p className="text-red-800 mb-2">{error}</p>
-          <p className="text-red-700 text-sm">Please check your API key configuration and try again.</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl p-8 text-center max-w-md shadow-2xl border border-gray-200">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="text-4xl">⚠️</span>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-3">Unable to Load Prayer Times</h3>
+          <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-4">
+            <p className="text-red-700 font-medium text-sm leading-relaxed">{error}</p>
+          </div>
+          <p className="text-gray-600 text-sm mb-6">Please check your API key configuration and try again.</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
