@@ -240,9 +240,9 @@ export default function Home() {
             <div className={`flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-1.5 transition-all gap-1.5 ${nextPrayer?.name === 'fajr' ? 'bg-gradient-to-r from-green-500 to-green-600 text-white scale-[1.02] shadow-lg' : ''}`}>
               <span className="text-xl">🌙</span>
               <span className="font-semibold text-sm flex-1">{prayerData.prayer_schedule.fajr.name[currentLang]}</span>
-              <span className="font-medium text-sm flex flex-col items-end gap-0.5 text-gray-600">
+              <span className={`font-medium text-sm flex flex-col items-end gap-0.5 ${nextPrayer?.name === 'fajr' ? 'text-white' : 'text-gray-600'}`}>
                 <span>{prayerData.prayer_schedule.fajr.begins[currentLang]}</span>
-                <span className="text-xs text-gray-500">{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.fajr.iqamah?.[currentLang]}</span>
+                <span className={`text-xs ${nextPrayer?.name === 'fajr' ? 'text-white/80' : 'text-gray-500'}`}>{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.fajr.iqamah?.[currentLang]}</span>
               </span>
             </div>
 
@@ -255,36 +255,36 @@ export default function Home() {
             <div className={`flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-1.5 transition-all gap-1.5 ${nextPrayer?.name === 'dhuhr' ? 'bg-gradient-to-r from-green-500 to-green-600 text-white scale-[1.02] shadow-lg' : ''}`}>
               <span className="text-xl">☀️</span>
               <span className="font-semibold text-sm flex-1">{prayerData.prayer_schedule.dhuhr.name[currentLang]}</span>
-              <span className="font-medium text-sm flex flex-col items-end gap-0.5 text-gray-600">
+              <span className={`font-medium text-sm flex flex-col items-end gap-0.5 ${nextPrayer?.name === 'dhuhr' ? 'text-white' : 'text-gray-600'}`}>
                 <span>{prayerData.prayer_schedule.dhuhr.begins[currentLang]}</span>
-                <span className="text-xs text-gray-500">{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.dhuhr.iqamah?.[currentLang]}</span>
+                <span className={`text-xs ${nextPrayer?.name === 'dhuhr' ? 'text-white/80' : 'text-gray-500'}`}>{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.dhuhr.iqamah?.[currentLang]}</span>
               </span>
             </div>
 
             <div className={`flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-1.5 transition-all gap-1.5 ${nextPrayer?.name === 'asr' ? 'bg-gradient-to-r from-green-500 to-green-600 text-white scale-[1.02] shadow-lg' : ''}`}>
               <span className="text-xl">🌤️</span>
               <span className="font-semibold text-sm flex-1">{prayerData.prayer_schedule.asr.name[currentLang]}</span>
-              <span className="font-medium text-sm flex flex-col items-end gap-0.5 text-gray-600">
+              <span className={`font-medium text-sm flex flex-col items-end gap-0.5 ${nextPrayer?.name === 'asr' ? 'text-white' : 'text-gray-600'}`}>
                 <span>{prayerData.prayer_schedule.asr.begins[currentLang]}</span>
-                <span className="text-xs text-gray-500">{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.asr.iqamah?.[currentLang]}</span>
+                <span className={`text-xs ${nextPrayer?.name === 'asr' ? 'text-white/80' : 'text-gray-500'}`}>{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.asr.iqamah?.[currentLang]}</span>
               </span>
             </div>
 
             <div className={`flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-1.5 transition-all gap-1.5 ${nextPrayer?.name === 'maghrib' ? 'bg-gradient-to-r from-green-500 to-green-600 text-white scale-[1.02] shadow-lg' : ''}`}>
               <span className="text-xl">🌇</span>
               <span className="font-semibold text-sm flex-1">{prayerData.prayer_schedule.maghrib.name[currentLang]}</span>
-              <span className="font-medium text-sm flex flex-col items-end gap-0.5 text-gray-600">
+              <span className={`font-medium text-sm flex flex-col items-end gap-0.5 ${nextPrayer?.name === 'maghrib' ? 'text-white' : 'text-gray-600'}`}>
                 <span>{prayerData.prayer_schedule.maghrib.begins[currentLang]}</span>
-                <span className="text-xs text-gray-500">{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.maghrib.iqamah?.[currentLang]}</span>
+                <span className={`text-xs ${nextPrayer?.name === 'maghrib' ? 'text-white/80' : 'text-gray-500'}`}>{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.maghrib.iqamah?.[currentLang]}</span>
               </span>
             </div>
 
             <div className={`flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-1.5 transition-all gap-1.5 ${nextPrayer?.name === 'isha' ? 'bg-gradient-to-r from-green-500 to-green-600 text-white scale-[1.02] shadow-lg' : ''}`}>
               <span className="text-xl">🌃</span>
               <span className="font-semibold text-sm flex-1">{prayerData.prayer_schedule.isha.name[currentLang]}</span>
-              <span className="font-medium text-sm flex flex-col items-end gap-0.5 text-gray-600">
+              <span className={`font-medium text-sm flex flex-col items-end gap-0.5 ${nextPrayer?.name === 'isha' ? 'text-white' : 'text-gray-600'}`}>
                 <span>{prayerData.prayer_schedule.isha.begins[currentLang]}</span>
-                <span className="text-xs text-gray-500">{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.isha.iqamah?.[currentLang]}</span>
+                <span className={`text-xs ${nextPrayer?.name === 'isha' ? 'text-white/80' : 'text-gray-500'}`}>{prayerData.iqamah_label[currentLang]}: {prayerData.prayer_schedule.isha.iqamah?.[currentLang]}</span>
               </span>
             </div>
           </div>
