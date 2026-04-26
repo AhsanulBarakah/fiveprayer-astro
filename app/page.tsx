@@ -13,8 +13,8 @@ export default function Home() {
       try {
         const response = await fetch('/api/prayer-times');
         const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch prayer times');
+        if (data.error) {
+          throw new Error(data.error);
         }
         setPrayerData(data);
       } catch (e) {
