@@ -48,7 +48,12 @@ export default function Home() {
       clearInterval(fetchInterval);
       if (midnightTimeout) clearTimeout(midnightTimeout);
     };
-  }, [prayerData]);
+  }, [prayerData, currentLang]);
+
+  // Update clock immediately when language changes
+  useEffect(() => {
+    updateClock();
+  }, [currentLang]);
 
   function updateClock() {
     const clockElement = document.getElementById('live-clock');
